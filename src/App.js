@@ -1,24 +1,42 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { Suspense, useContext } from "react";
+import AppLayout from "./Components/AppLayout/AppLayout";
+import { Route, Routes } from "react-router-dom";
+import { UserContext } from "Components/Contexts/UserContext";
+
+/* Containers */
+const Home = React.lazy(() => import("Containers/Home/Home"));
+const Login = React.lazy(() => import("Containers/Login/Login"));
+const Products = React.lazy(() => import("Containers/Products/Products"));
 
 function App() {
+  const { user } = useContext(UserContext);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <Suspense fallback={<div>Loading...</div>}>
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <AppLayout user={user}>
+                <Home />
+              </AppLayout>
+            }
+          />
+          <Route
+            path="/products"
+            element={
+              <AppLayout user={user}>
+                <Products />
+              </AppLayout>
+            }
+          />
+
+          <Route path="/login" element={<Login />} />
+          <Route path="*" element={<div>Lost</div>} />
+        </Routes>
+      </Suspense>
+    </>
   );
 }
 
